@@ -25,7 +25,7 @@ class ComplexPropEvaluatorImpl implements ComplexPropEvaluator{
     }
 
     public boolean evalPostfix(){
-        Stack<String> evalstack = null;
+        Stack<String> evalstack = new Stack<>();
         for(char token : postfix){
             if(('A' <= token && token <= 'Z') || ('a' <= token && token <= 'z')){
                 evalstack.push(Character.toString(token));

@@ -1,6 +1,9 @@
 package proposition;
 
+import java.util.List;
+
 public interface ComplexProposition {
-    void printAllValidConnective();
-    void printTruthTable(String line);
+    void setPropOrder(List<String> keys);
+    void printTruthTable();
+    void printPostfix();
 }

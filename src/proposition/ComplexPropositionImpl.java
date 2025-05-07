@@ -1,18 +1,17 @@
 package proposition;
-import java.util.DuplicateFormatFlagsException;
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.List;
-import java.util.ArrayList;
 
-class ComplexPropositionImpl {
+class ComplexPropositionImpl implements ComplexProposition{
     private String inputLine;
     private List<Character> postfix;
-    private Stack<Character> connctiveStack;
-    private TruthMap truthMap;
+    private Stack<Character> connectiveStack;
+    public TruthMap truthMap;
     private ComplexPropEvaluator evaluator;
 
     public final static char[] validConnective = { '~', '·', '∨', '→', '↔', '[', '{', '(', ')', '}', ']' };
-    public final static String[] ExampleComplexProposition = new String[]{"(P·Q)VR", "~[CV(AV~D)]·(A->~C)", "P<->Q"};
+    public final static String[] ExampleComplexProposition = new String[]{"(P · Q) ∨ R", "~[ C ∨ (A ∨ ~D)] · (A → ~C)", "P ↔ Q"};
 
     private boolean isValidConnective(char op){
         for (char sample : validConnective)
@@ -29,24 +28,24 @@ class ComplexPropositionImpl {
             default -> ' ';
         };
         while (true) {
-            if (connctiveStack.empty()) {
+            if (connectiveStack.empty()) {
                 throw new RuntimeException("Bracket Mismatch Error : matching '" + bracketLeft + "' not found for '" + bracketRight + "'");
             }
-            char op = connctiveStack.pop();
+            char op = connectiveStack.pop();
             if (op == bracketLeft)
                 break;
             else
                 postfix.add(op);
         }
-        if (!connctiveStack.empty() && connctiveStack.peek() == '~') {
+        if (!connectiveStack.empty() && connectiveStack.peek() == '~') {
             postfix.add('~');
-            connctiveStack.pop();
+            connectiveStack.pop();
         }
     }
 
     private void popStackTilEmpty(){
-        while(!connctiveStack.empty()){
-            postfix.add(connctiveStack.pop());
+        while(!connectiveStack.empty()){
+            postfix.add(connectiveStack.pop());
         }
     }
 
@@ -55,26 +54,38 @@ class ComplexPropositionImpl {
         return evaluator.evalPostfix();
     }
 
+    public void printPostfix(){
+        for (Character token : postfix){
+            System.out.print(token + " ");
+        }
+    }
+
     private void infixToPostfix(String inputLine){
         for (int i = 0; i < inputLine.length(); ++i){
             char token = inputLine.charAt(i);
             if (token == ' ') continue;
             else if (('A' <= token && token <= 'Z') || ('a' <= token && token <= 'z')){
                 try{
+                    postfix.add(token);
                     truthMap.addProposition(token);
                 }catch(InvalidInputExeption ignored){}
+                if(!connectiveStack.empty() && connectiveStack.peek() == '~')
+                    postfix.add(connectiveStack.pop());
             }
-            else if(! isValidConnective(token))
+            else if(!isValidConnective(token))
                 throw new InvalidInputExeption("Invalid Connective detected : " + token);
             else if (token == ']'  || token == '}' || token == ')')
                 popStackTilLeftBracket(token);
-            else connctiveStack.push(token);
+            else connectiveStack.push(token);
         }
         popStackTilEmpty();
         evaluator = new ComplexPropEvaluatorImpl(postfix, truthMap);
     }
 
     ComplexPropositionImpl(String inputLine){
+        truthMap = new TruthMap();
+        connectiveStack = new Stack<>();
+        postfix = new ArrayList<>();
         this.inputLine = inputLine;
         infixToPostfix(inputLine);
     }
@@ -101,4 +112,9 @@ class ComplexPropositionImpl {
          System.out.println("Major Logical Connective : " + evaluator.getMajorLogicalConnective());
          System.out.println("*  *  *  *  *");
     }
+
+    public void setPropOrder(List<String> keys){
+        truthMap.setPropOrder(keys);
+    }
+
 }

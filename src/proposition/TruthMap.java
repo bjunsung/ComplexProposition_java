@@ -1,24 +1,27 @@
 package proposition;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 class TruthMap {
     private int propSize;
     private int fixedSize;
-    private String[] proposition;
-    private boolean[] truthValue;
-    private boolean[] fixed;
+    private final String[] proposition;
+    private final boolean[] truthValue;
+    private final boolean[] fixed;
 
     TruthMap(){
         proposition = new String[52];
         truthValue = new boolean[52];
         fixed = new boolean[52];
+        propSize = 0;
+        fixedSize = 0;
     }
 
     void setKey(String key, boolean value){
         for (int i = 0; i < propSize; ++i){
-            if(proposition[i] == key){
+            if(proposition[i].equals(key)){
                 truthValue[i] = value;
                 return;
             }
@@ -30,7 +33,7 @@ class TruthMap {
 
     int findIndex(String key){
         for (int i = 0; i < propSize; ++i)
-            if (proposition[i] == key)
+            if (proposition[i].equals(key))
                 return i;
         throw new IndexNotFoundException("can not find key : " + key);
     }
@@ -43,6 +46,7 @@ class TruthMap {
         } catch(IndexNotFoundException e){
             proposition[propSize] = key;
             truthValue[propSize] = false;
+            propSize++;
         }
     }
 
@@ -53,6 +57,8 @@ class TruthMap {
     }
 
     boolean getTruthValue(String key){
+        if (key.equals("TRUE")) return true;
+        else if (key.equals("FALSE")) return false;
         int idx = findIndex(key);
         return truthValue[idx];
     }
@@ -64,7 +70,7 @@ class TruthMap {
         }
     }
 
-    private boolean checkDuplicate(String[] arr){
+    private boolean checkDuplicate(List<String> arr){
         Set<String> seen = new HashSet<>();
         for(String key : arr){
             if(!seen.add(key)) return true;
@@ -72,12 +78,12 @@ class TruthMap {
         return false;
     }
 
-    void setPropOrder(String[] keys){
+    void setPropOrder(List<String> keys){
         if (checkDuplicate(keys)) throw new InvalidInputExeption("duplicate proposition key detected, check your pre-ordered proposition.");
-        for (int i = 0; i < keys.length; ++i){
-            int idx = findIndex(keys[i]);
+        for (int i = 0; i < keys.size(); ++i){
+            int idx = findIndex(keys.get(i));
             if (idx == i) continue;
-            String tempKey = keys[idx];
+            String tempKey = keys.get(i);
             boolean tempValue = truthValue[idx];
             boolean tempFixed = fixed[idx];
             for(int j = idx; j > i; --j){
@@ -92,7 +98,8 @@ class TruthMap {
     }
 
     void printPropositions(){
-        for (String key : proposition){
+        for (int i=  0; i < propSize; ++i){
+            String key = proposition[i];
             if(key.equals(proposition[0])) System.out.print("idx__" + key);
             else System.out.print("___" + key);
         }
@@ -101,7 +108,7 @@ class TruthMap {
     void printTruthValue(){
         for (int i= 0; i < propSize;  ++i){
             System.out.print(truthValue[i] ? "T" : "F");
-            System.out.print("  |");
+            System.out.print(" | ");
         }
     }
 
