@@ -1,9 +1,6 @@
 package proposition;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 public class Factory {
     static Scanner scanner = new Scanner(System.in);
@@ -57,11 +54,37 @@ public class Factory {
         }
     }
 
+    static void setFixedProposition(ComplexProposition cp){
+        System.out.print("Would you like to fix the truth value of any propositions? (y/n)");
+        String answer = scanner.next();
+        scanner.nextLine();
+        if (!(answer.equals("Y") || answer.equals("y")))
+            throw new InputMismatchException();
+        System.out.println("Complex Proposition ex) ~[(~P ∨ ~Q) → A]  for example) P TRUE Q FALSE, then this will set the proposition P always true, Q always false.");
+        System.out.print("input fixed values here >> ");
+        String fixedLine = scanner.nextLine();
+        String[] tokens = fixedLine.trim().split("\\s+");
+        List<List<String>> fixedMap = new ArrayList<>();
+        if(tokens.length % 2 != 0) throw new InvalidInputExeption("the proposition and truth value must be pair");
+        for (int i = 0 ;i < tokens.length ; i += 2){
+            List<String> pair = new ArrayList<>();
+            pair.add(tokens[i]);
+            pair.add(tokens[i + 1]);
+            fixedMap.add(pair);
+        }
+        cp.setFixedProposition(fixedMap);
+    }
+
+
     public static ComplexProposition createComplexProposition(){
         ComplexPropositionImpl.printValidConnective();
         System.out.println("Example Input : 1. (P · Q) ∨ R\t2. ~[C ∨ (A ∨ ~D)] · (A → ~C)\t3. P ↔ Q");
         ComplexProposition cp = new ComplexPropositionImpl(getCP());
         setOrder(cp);
+        try {
+            setFixedProposition(cp);
+        }catch(InputMismatchException e){System.out.println(e.getMessage());}
         return cp;
     }
+
 }

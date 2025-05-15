@@ -103,7 +103,7 @@ class ComplexPropositionImpl implements ComplexProposition{
          System.out.println("*  *  *  *  *\n<TRUTH TABLE>\n*  *  *  *  *");
          truthMap.printPropositions();
          System.out.println("___" + inputLine);
-         for(int i = 0; i < Math.pow(2.0, (double) truthMap.getMutablePropSize()); ++i){
+         for(int i = 0; i < Math.pow(2.0, truthMap.getMutablePropSize()); ++i){
              boolean truthValueInThisCase = getTruthValueForEachCase(i);
              System.out.printf("%2d | ", i+1);
              truthMap.printTruthValue();
@@ -117,4 +117,5 @@ class ComplexPropositionImpl implements ComplexProposition{
         truthMap.setPropOrder(keys);
     }
 
+    public void setFixedProposition(List<List<String>> fixedMap){truthMap.setFixedProposition(fixedMap);}
 }

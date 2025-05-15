@@ -1,6 +1,7 @@
 package proposition;
 
 import java.util.HashSet;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Set;
 
@@ -50,11 +51,22 @@ class TruthMap {
         }
     }
 
-    void setFixedProposition(String key, boolean value) {
-        int idx = findIndex(key);
-        fixed[idx] = true;
-        fixedSize++;
+    public void setFixedProposition(List<List<String>> mappings){
+        for (List<String> mapping : mappings){
+            try{
+                int idx = findIndex(mapping.get(0));
+                if (mapping.get(1).equalsIgnoreCase("TRUE"))
+                    truthValue[idx] = true;
+                else if (mapping.get(1).equalsIgnoreCase("FALSE"))
+                    truthValue[idx] = false;
+                else
+                    throw new InvalidInputExeption("Invalid truth value detected in setting Fixed value");
+                fixed[idx] = true;
+                fixedSize++;
+            }catch(IndexNotFoundException e){System.out.println(e.getMessage());}
+        }
     }
+
 
     boolean getTruthValue(String key){
         if (key.equals("TRUE")) return true;
