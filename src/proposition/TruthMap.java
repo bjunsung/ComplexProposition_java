@@ -76,12 +76,12 @@ class TruthMap {
     }
 
     void setPropValueStepSequence(int num){
-        for(int i = 0, idx = 0; i < this.propSize; ++i, ++idx){
-            if (fixed[i]) {
-                idx--;
+        for(int idx = 0, i = 0; idx < this.propSize; ++idx, ++i){
+            if (fixed[idx]) {
+                i--;
                 continue;
             }
-            truthValue[i] = num / (int) Math.pow(2.0, (double) this.getMutablePropSize() - (idx+1)) % 2 == 0;
+            truthValue[idx] = num / (int) Math.pow(2.0, (double) this.getMutablePropSize() - (i + 1)) % 2 == 0;
         }
     }
 
